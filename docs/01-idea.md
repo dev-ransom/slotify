@@ -1,0 +1,3 @@
+Project: "Slotify" — A service booking platform (think: booking a haircut, tutoring session, or consultation) with real-time availability, Stripe payment, and account management.
+Why this over generic e-commerce: booking flows are harder than a plain shopping cart — you have to handle time-slot conflicts, timezones, cancellations/refunds, and state that changes based on other users' actions (someone else grabs the slot you were looking at). That complexity is exactly what makes it a senior-level piece, not a tutorial clone.
+Target user: small service businesses (freelance tutors, salons, consultants) who need an embeddable booking widget + their customers who book.
