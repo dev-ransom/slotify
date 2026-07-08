@@ -122,6 +122,7 @@ export function SignupForm() {
           name="name"
           required
           autoComplete="name"
+          placeholder="John Doe"
           value={name}
           onChange={(e) => setName(e.target.value)}
           error={errors.name}
@@ -131,6 +132,7 @@ export function SignupForm() {
           label="Email"
           type="email"
           name="email"
+          placeholder="john@example.com"
           required
           autoComplete="email"
           value={email}
@@ -143,6 +145,7 @@ export function SignupForm() {
             label="Password"
             name="password"
             required
+            placeholder="Enter a strong password"
             autoComplete="new-password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
@@ -154,6 +157,7 @@ export function SignupForm() {
         <PasswordInput
           label="Confirm password"
           name="confirmPassword"
+          placeholder="Re-enter your password"
           required
           autoComplete="new-password"
           value={confirmPassword}
