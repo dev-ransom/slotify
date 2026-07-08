@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { createSlotHold, releaseSlotHold, getSlotHoldTTL } from "@/lib/redis";
+import { getOrCreateGuestSessionId } from "@/lib/guest-session";
 
 // POST /api/slots/[slotId]/hold
 // Attempts to place a temporary hold on a slot so it can't be booked by anyone else
@@ -11,12 +12,12 @@ export async function POST(
   { params }: { params: { slotId: string } }
 ) {
   const { slotId } = params;
-  const session = await auth();
+    const session = await auth();
+    
 
   // Support both authenticated users and guests.
   // For guests, the client must send a stable guestSessionId (e.g. stored in a cookie).
-  const body = await req.json().catch(() => ({}));
-  const holderId = session?.user?.id ?? body.guestSessionId;
+  const holderId = session?.user?.id ?? (await getOrCreateGuestSessionId());
 
   if (!holderId) {
     return NextResponse.json(
@@ -83,8 +84,7 @@ export async function DELETE(
 ) {
   const { slotId } = params;
   const session = await auth();
-  const body = await req.json().catch(() => ({}));
-  const holderId = session?.user?.id ?? body.guestSessionId;
+  const holderId = session?.user?.id ?? (await getOrCreateGuestSessionId());
 
   if (!holderId) {
     return NextResponse.json(
