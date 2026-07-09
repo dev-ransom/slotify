@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
@@ -10,10 +10,29 @@ import { Button } from "@/components/ui/Button";
 
 export function LoginForm() {
   const router = useRouter();
+  const emailRef = useRef<HTMLInputElement>(null);
+  const passwordRef = useRef<HTMLInputElement>(null);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    const syncFieldValues = () => {
+      setEmail(emailRef.current?.value ?? "");
+      setPassword(passwordRef.current?.value ?? "");
+    };
+
+    syncFieldValues();
+
+    const frameId = window.requestAnimationFrame(syncFieldValues);
+    const timeoutId = window.setTimeout(syncFieldValues, 50);
+
+    return () => {
+      window.cancelAnimationFrame(frameId);
+      window.clearTimeout(timeoutId);
+    };
+  }, []);
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -44,45 +63,40 @@ export function LoginForm() {
   return (
     <div className="w-full max-w-md mx-auto">
       <div className="text-center mb-8">
-        <h1 className="text-2xl font-bold text-neutral-900">Welcome back</h1>
+        <h1 className="text-2xl font-bold text-neutral-50">Welcome back</h1>
         <p className="text-neutral-500 mt-2">Log in to manage your bookings</p>
-      </div>
-
-      <Button type="button" variant="outline" onClick={handleGoogleSignIn}>
-        <GoogleIcon />
-        Continue with Google
-      </Button>
-
-      <div className="flex items-center gap-3 my-6">
-        <div className="flex-1 h-px bg-neutral-200" />
-        <span className="text-sm text-neutral-400">or</span>
-        <div className="flex-1 h-px bg-neutral-200" />
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4" noValidate>
         <Input
+          ref={emailRef}
           label="Email"
           type="email"
           name="email"
+          placeholder="your@email.com"
           required
           autoComplete="email"
+          clearable
+          onClear={() => setEmail("")}
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
 
         <div>
           <PasswordInput
+            ref={passwordRef}
             label="Password"
             name="password"
             required
+            placeholder="Enter password"
             autoComplete="current-password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
-          <div className="flex justify-end mt-1.5">
+          <div className="flex justify-start mt-1.5">
             <Link
               href="/forgot-password"
-              className="text-sm text-brand-600 hover:text-brand-700"
+              className="text-xs text-brand-600 hover:text-brand-700"
             >
               Forgot password?
             </Link>
@@ -95,7 +109,23 @@ export function LoginForm() {
           </p>
         )}
 
-        <Button type="submit" isLoading={isLoading} loadingText="Logging in...">
+        <div className="flex items-center gap-3 my-6">
+          <div className="flex-1 h-px bg-[#2E2E2E]" />
+          <span className="text-sm text-neutral-400">or</span>
+          <div className="flex-1 h-px bg-[#2E2E2E]" />
+        </div>
+
+        <Button type="button" variant="outline" onClick={handleGoogleSignIn}>
+          <GoogleIcon />
+          Continue with Google
+        </Button>
+
+        <Button
+          type="submit"
+          disabled={!email.trim() || !password.trim() || isLoading}
+          isLoading={isLoading}
+          loadingText="Logging in..."
+        >
           Log in
         </Button>
       </form>

@@ -21,7 +21,7 @@ export const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
       <div>
         <label
           htmlFor={inputId}
-          className="block text-sm font-medium text-neutral-700 mb-1.5"
+          className="block text-sm font-medium text-neutral-500 mb-1.5"
         >
           {label}
         </label>
@@ -32,8 +32,8 @@ export const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
             type={visible ? "text" : "password"}
             aria-invalid={!!error}
             aria-describedby={error ? errorId : hint ? hintId : undefined}
-            className={`w-full rounded-card border px-4 py-2.5 pr-11 text-neutral-900 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-colors ${
-              error ? "border-accent-rose" : "border-neutral-200"
+            className={`w-full rounded-card border px-4 py-2.5 pr-11 bg-surface text-white placeholder:text-neutral-400 placeholder:text-sm focus:outline-none transition-colors ${
+              error ? "border-accent-rose" : "border-[#2E2E2E]"
             } ${className ?? ""}`}
             {...props}
           />
@@ -42,9 +42,9 @@ export const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
             onClick={() => setVisible((v) => !v)}
             aria-label={visible ? "Hide password" : "Show password"}
             aria-pressed={visible}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-600 focus:outline-none focus:ring-2 focus:ring-brand-500 rounded"
+            className="absolute right-3 top-1/2 cursor-pointer -translate-y-1/2 text-neutral-400 hover:text-neutral-600 focus:outline-none rounded"
           >
-            {!visible ? (
+            {visible ? (
               <EyeOff size={18} aria-hidden="true" />
             ) : (
               <Eye size={18} aria-hidden="true" />

@@ -13,7 +13,7 @@ const variantStyles = {
   secondary:
     "bg-neutral-100 hover:bg-neutral-200 text-neutral-800 focus:ring-neutral-400",
   outline:
-    "border border-neutral-200 hover:bg-neutral-50 text-neutral-700 focus:ring-brand-500",
+    "border border-[#2E2E2E]  text-neutral-400 focus:ring-brand-500",
 };
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(

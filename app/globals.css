@@ -37,6 +37,11 @@
   --color-accent-amber: #f59e0b;
   --color-accent-rose: #e11d48;
 
+  /* Surface colors — dark theme base */
+  --color-surface: #191919;        /* page background */
+  --color-surface-raised: #242424; /* cards, header, modals — one step lighter than page bg */
+  --color-surface-border: #333333; /* borders/dividers on dark surfaces */
+
   --font-sans: var(--font-inter), system-ui, sans-serif;
 
   --radius-card: 0.75rem;
@@ -46,6 +51,19 @@
   --shadow-card-hover: 0 4px 12px 0 rgb(0 0 0 / 0.1);
 }
 
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 1000px #1a1a1a inset !important; /* your input bg */
+  -webkit-text-fill-color: #fff !important;
+  caret-color: #fff;
+  border-color: #2e2e2e !important;
+  transition: background-color 999999s ease-in-out 0s;
+}
+
 body {
   font-family: var(--font-sans);
+  background-color: var(--color-surface);
+  color: var(--color-neutral-100);
 }
