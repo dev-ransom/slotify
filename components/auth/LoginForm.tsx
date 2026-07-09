@@ -7,6 +7,7 @@ import Link from "next/link";
 import { Input } from "@/components/ui/Input";
 import { PasswordInput } from "@/components/ui/PasswordInput";
 import { Button } from "@/components/ui/Button";
+import { GoogleAuthDivider } from "../ui/Or";
 
 export function LoginForm() {
   const router = useRouter();
@@ -109,16 +110,6 @@ export function LoginForm() {
           </p>
         )}
 
-        <div className="flex items-center gap-3 my-6">
-          <div className="flex-1 h-px bg-[#2E2E2E]" />
-          <span className="text-sm text-neutral-400">or</span>
-          <div className="flex-1 h-px bg-[#2E2E2E]" />
-        </div>
-
-        <Button type="button" variant="outline" onClick={handleGoogleSignIn}>
-          <GoogleIcon />
-          Continue with Google
-        </Button>
 
         <Button
           type="submit"
@@ -130,6 +121,7 @@ export function LoginForm() {
         </Button>
       </form>
 
+        <GoogleAuthDivider googleAuthHandler={handleGoogleSignIn} />
       <p className="text-center text-sm text-neutral-500 mt-6">
         New here?{" "}
         <Link
