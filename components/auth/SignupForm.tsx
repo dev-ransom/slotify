@@ -81,7 +81,7 @@ export function SignupForm() {
         return;
       }
 
-      router.push("/dashboard");
+      router.push(`/verify-email?email=${encodeURIComponent(email)}`);
       router.refresh();
     } catch {
       setErrors({
