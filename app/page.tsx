@@ -117,7 +117,7 @@ export default function LandingPage() {
             {Array.from({ length: 8 }).map((_, i) => (
               <div
                 key={i}
-                className="rounded-card bg-surface-raised border border-surface-border h-72 animate-pulse"
+                className="rounded-card bg-surface-raised border border-surface-border h-64 animate-pulse"
               />
             ))}
           </div>

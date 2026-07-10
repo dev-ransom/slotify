@@ -74,7 +74,7 @@ export function LoginForm() {
           label="Email"
           type="email"
           name="email"
-          placeholder="your@email.com"
+          placeholder="Enter your email"
           required
           autoComplete="email"
           clearable

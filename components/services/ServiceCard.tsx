@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Star } from "lucide-react";
+import { Star, ImageIcon } from "lucide-react";
 
 interface ServiceCardProps {
   id: string;
@@ -13,11 +13,12 @@ interface ServiceCardProps {
   reviewCount?: number;
   price: number; // cents
   currency?: string;
+  imageUrl?: string;
 }
 
 const badgeStyles: Record<string, string> = {
-  POPULAR: "bg-accent-amber/15 text-accent-amber",
-  NEW: "bg-brand-100 text-brand-700",
+  POPULAR: "bg-accent-amber/20 text-accent-amber",
+  NEW: "bg-brand-500/20 text-brand-400",
 };
 
 export function ServiceCard({
@@ -32,6 +33,7 @@ export function ServiceCard({
   reviewCount,
   price,
   currency = "usd",
+  imageUrl,
 }: ServiceCardProps) {
   const formattedPrice = new Intl.NumberFormat("en-US", {
     style: "currency",
@@ -40,8 +42,20 @@ export function ServiceCard({
   }).format(price / 100);
 
   return (
-    <div className="group bg-surface-raised rounded-card border border-surface-border shadow-card hover:shadow-card-hover transition-shadow overflow-hidden flex flex-col">
-      <div className="relative aspect-4/3 bg-neutral-100">
+    <div className="group bg-surface-raised rounded-card border border-surface-border shadow-card hover:shadow-card-hover hover:border-brand-600/40 transition-all overflow-hidden flex flex-col">
+      {/* Image / placeholder — fixed, moderate height instead of a tall aspect ratio,
+          so the card doesn't look like a mostly-empty void when no image exists yet */}
+      <div className="relative h-36 bg-neutral-800 flex items-center justify-center">
+        {imageUrl ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={imageUrl} alt="" className="w-full h-full object-cover" />
+        ) : (
+          <ImageIcon
+            size={28}
+            className="text-neutral-600"
+            aria-hidden="true"
+          />
+        )}
         {badge && (
           <span
             className={`absolute top-3 left-3 text-xs font-semibold px-2.5 py-1 rounded-pill ${badgeStyles[badge]}`}
@@ -53,20 +67,22 @@ export function ServiceCard({
 
       <div className="p-4 flex flex-col flex-1">
         {category && (
-          <span className="text-xs font-medium text-brand-600 uppercase tracking-wide mb-1">
+          <span className="text-xs font-medium text-brand-400 uppercase tracking-wide mb-1">
             {category}
           </span>
         )}
-        <h3 className="font-semibold text-neutral-50 mb-1">{name}</h3>
+        <h3 className="font-semibold text-neutral-50 mb-1 leading-snug">
+          {name}
+        </h3>
 
-        <p className="text-sm text-neutral-500 mb-2">
+        <p className="text-sm text-neutral-400 mb-2">
           {providerName}
           {providerCredential && (
-            <span className="text-neutral-400"> · {providerCredential}</span>
+            <span className="text-neutral-500"> · {providerCredential}</span>
           )}
         </p>
 
-        <div className="flex items-center gap-3 text-sm text-neutral-500 mb-3">
+        <div className="flex items-center gap-3 text-sm text-neutral-400 mb-3">
           <span>{durationMin} min</span>
           {rating && (
             <span className="flex items-center gap-1">
@@ -77,20 +93,20 @@ export function ServiceCard({
               />
               {rating.toFixed(1)}
               {reviewCount && (
-                <span className="text-neutral-400">({reviewCount})</span>
+                <span className="text-neutral-500">({reviewCount})</span>
               )}
             </span>
           )}
         </div>
 
-        <div className="mt-auto flex items-center justify-between pt-2">
+        <div className="mt-auto flex items-center justify-between pt-2 border-t border-surface-border">
           <div>
             <span className="font-bold text-neutral-50">{formattedPrice}</span>
-            <span className="text-xs text-neutral-400"> /session</span>
+            <span className="text-xs text-neutral-500"> /session</span>
           </div>
           <Link
             href={`/services/${id}`}
-            className="text-sm font-medium bg-brand-700 hover:bg-brand-800 text-white rounded-pill px-4 py-2 transition-colors focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2"
+            className="text-sm font-medium bg-brand-600 hover:bg-brand-700 text-white rounded-pill px-4 py-2 transition-colors focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2 focus:ring-offset-surface-raised"
           >
             Book Now
           </Link>

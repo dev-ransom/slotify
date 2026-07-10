@@ -112,7 +112,7 @@ export function SignupForm() {
           name="name"
           required
           autoComplete="name"
-          placeholder="John Doe"
+          placeholder="Enter full name"
           value={name}
           onChange={(e) => setName(e.target.value)}
           error={errors.name}
@@ -122,7 +122,7 @@ export function SignupForm() {
           label="Email"
           type="email"
           name="email"
-          placeholder="john@example.com"
+          placeholder="Enter email address"
           required
           autoComplete="email"
           value={email}
