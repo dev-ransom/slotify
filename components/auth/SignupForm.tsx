@@ -163,13 +163,20 @@ export function SignupForm() {
 
         <Button
           type="submit"
+          disabled={
+            isLoading ||
+            (!name.trim() &&
+              !email.trim() &&
+              !password.trim() &&
+              !confirmPassword.trim())
+          }
           isLoading={isLoading}
           loadingText="Creating account..."
         >
           Sign up
         </Button>
       </form>
-        <GoogleAuthDivider googleAuthHandler={handleGoogleSignIn} />
+      <GoogleAuthDivider googleAuthHandler={handleGoogleSignIn} />
       <p className="text-center text-sm text-neutral-500 mt-6">
         Already have an account?{" "}
         <Link
