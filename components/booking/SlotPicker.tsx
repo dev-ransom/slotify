@@ -64,7 +64,7 @@ export function SlotPicker({
               role="tab"
               aria-selected={isActive}
               onClick={() => setActiveDate(dateKey)}
-              className={`whitespace-nowrap px-4 py-2.5 rounded-card text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-brand-500 ${
+              className={`whitespace-nowrap px-4 py-2.5 rounded-card text-sm font-medium transition-colors focus:outline-none ${
                 isActive
                   ? "bg-brand-600 text-white"
                   : "bg-surface-raised text-neutral-300 border border-surface-border hover:border-brand-600/50"
