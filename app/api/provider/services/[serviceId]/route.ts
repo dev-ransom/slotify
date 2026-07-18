@@ -15,14 +15,15 @@ async function assertOwnsService(userId: string, serviceId: string) {
 // Body: any subset of { name, description, durationMin, price, currency, isActive }
 export async function PATCH(
   req: Request,
-  { params }: { params: { serviceId: string } }
+  { params }: { params: Promise<{ serviceId: string }> }
 ) {
   const session = await auth();
   if (!session?.user?.id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const check = await assertOwnsService(session.user.id, params.serviceId);
+  const { serviceId } = await params;
+  const check = await assertOwnsService(session.user.id, serviceId);
   if (!check.ok) {
     return NextResponse.json({ error: check.error }, { status: check.status });
   }
@@ -37,7 +38,7 @@ export async function PATCH(
   }
 
   const service = await prisma.service.update({
-    where: { id: params.serviceId },
+    where: { id: serviceId },
     data: allowed,
   });
 
@@ -49,20 +50,22 @@ export async function PATCH(
 // for slots/bookings tied to this service, and avoids cascading deletes wiping past records.
 export async function DELETE(
   req: Request,
-  { params }: { params: { serviceId: string } }
+  { params }: { params: Promise<{ serviceId: string }> }
 ) {
   const session = await auth();
   if (!session?.user?.id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const check = await assertOwnsService(session.user.id, params.serviceId);
+  const { serviceId } = await params;
+
+  const check = await assertOwnsService(session.user.id, serviceId);
   if (!check.ok) {
     return NextResponse.json({ error: check.error }, { status: check.status });
   }
 
   const service = await prisma.service.update({
-    where: { id: params.serviceId },
+    where: { id: serviceId },
     data: { isActive: false },
   });
 

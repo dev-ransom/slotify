@@ -15,14 +15,15 @@ import { prisma } from "@/lib/prisma";
 // without this route, availability could only ever come from the seed script.
 export async function POST(
   req: Request,
-  { params }: { params: { serviceId: string } }
+  { params }: { params: Promise<{ serviceId: string }>}
 ) {
   const session = await auth();
   if (!session?.user?.id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const service = await prisma.service.findUnique({ where: { id: params.serviceId } });
+  const { serviceId } = await params;
+  const service = await prisma.service.findUnique({ where: { id: serviceId } });
 
   if (!service) {
     return NextResponse.json({ error: "Service not found" }, { status: 404 });
@@ -106,14 +107,15 @@ export async function POST(
 // can see their full calendar, not just availability.
 export async function GET(
   req: Request,
-  { params }: { params: { serviceId: string } }
+  { params }: { params: Promise<{ serviceId: string }> }
 ) {
   const session = await auth();
   if (!session?.user?.id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const service = await prisma.service.findUnique({ where: { id: params.serviceId } });
+  const { serviceId } = await params;
+  const service = await prisma.service.findUnique({ where: { id: serviceId } });
 
   if (!service) {
     return NextResponse.json({ error: "Service not found" }, { status: 404 });
@@ -124,7 +126,7 @@ export async function GET(
   }
 
   const slots = await prisma.slot.findMany({
-    where: { serviceId: params.serviceId },
+    where: {  serviceId },
     include: { booking: true },
     orderBy: { startTime: "asc" },
   });
