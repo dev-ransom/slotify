@@ -10,6 +10,7 @@ interface Service {
   id: string;
   name: string;
   description: string | null;
+  category: string | null;
   durationMin: number;
   price: number;
   currency: string;
@@ -37,6 +38,8 @@ export default function LandingPage() {
       setIsLoading(true);
       const params = new URLSearchParams();
       if (search) params.set("search", search);
+      if (activeCategory !== "All Services")
+        params.set("category", activeCategory);
 
       const res = await fetch(`/api/services?${params.toString()}`);
       const data = await res.json();
@@ -46,7 +49,7 @@ export default function LandingPage() {
 
     const debounce = setTimeout(fetchServices, 300);
     return () => clearTimeout(debounce);
-  }, [search]);
+  }, [search, activeCategory]);
 
   return (
     <div className="min-h-screen bg-surface">
@@ -124,7 +127,7 @@ export default function LandingPage() {
         ) : services.length === 0 ? (
           <div className="text-center py-20">
             <p className="text-neutral-500">
-              No services found. Try a different search.
+              No services found. Try a different search or category.
             </p>
           </div>
         ) : (
@@ -134,6 +137,7 @@ export default function LandingPage() {
                 key={service.id}
                 id={service.id}
                 name={service.name}
+                category={service.category ?? undefined}
                 providerName={service.provider.name ?? "Provider"}
                 durationMin={service.durationMin}
                 price={service.price}
