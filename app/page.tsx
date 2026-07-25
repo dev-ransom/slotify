@@ -33,6 +33,8 @@ export default function LandingPage() {
   const [search, setSearch] = useState("");
   const [activeCategory, setActiveCategory] = useState("All Services");
 
+  const [pendingSearch, setPendingSearch] = useState("");
+
   useEffect(() => {
     async function fetchServices() {
       setIsLoading(true);
@@ -51,6 +53,11 @@ export default function LandingPage() {
     return () => clearTimeout(debounce);
   }, [search, activeCategory]);
 
+  function handleSearchSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setSearch(pendingSearch); // triggers the effect above immediately, bypassing the debounce wait
+  }
+
   return (
     <div className="min-h-screen bg-surface">
       <Header />
@@ -66,7 +73,7 @@ export default function LandingPage() {
             in one place.
           </p>
 
-          <div className="flex gap-2 max-w-2xl">
+          <form onSubmit={handleSearchSubmit} className="flex gap-2 ">
             <div className="relative flex-1">
               <Search
                 size={18}
@@ -75,15 +82,19 @@ export default function LandingPage() {
               />
               <input
                 type="text"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
+                value={pendingSearch}
+                onChange={(e) => setPendingSearch(e.target.value)}
                 placeholder="Search services, professionals, or categories..."
                 aria-label="Search services"
-                className="w-full rounded-pill pl-11 pr-4 py-3 text-neutral-900 focus:outline-none focus:ring-2 focus:ring-brand-300"
+                className="w-full rounded-pill pl-11 pr-4 py-3 text-neutral-900 placeholder:text-neutral-200  focus:outline-none focus:ring-2 focus:ring-brand-300"
               />
             </div>
-            <Button className="w-auto px-8 rounded-pill">Search</Button>
-          </div>
+            <div>
+              <Button type="submit" className="w-auto px-8 rounded-pill">
+                Search
+              </Button>
+            </div>
+          </form>
         </div>
       </section>
 
@@ -100,7 +111,7 @@ export default function LandingPage() {
               role="tab"
               aria-selected={activeCategory === category}
               onClick={() => setActiveCategory(category)}
-              className={`whitespace-nowrap px-4 py-2 rounded-pill text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-brand-500 ${
+              className={`whitespace-nowrap px-4 py-2 rounded-pill text-sm font-medium transition-colors focus:outline-none  ${
                 activeCategory === category
                   ? "bg-brand-600 text-white"
                   : "bg-surface-raised text-neutral-300 border border-surface-border hover:bg-neutral-800"

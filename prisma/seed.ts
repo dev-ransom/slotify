@@ -35,6 +35,7 @@ async function main() {
   const haircut = await prisma.service.create({
     data: {
       name: "Classic Haircut",
+      category: "Beauty & Spa",
       description: "A precision haircut tailored to your style.",
       durationMin: 30,
       price: 3500, // $35.00
@@ -45,6 +46,7 @@ async function main() {
   const consultation = await prisma.service.create({
     data: {
       name: "1:1 Career Consultation",
+      category: "Consulting",
       description: "One-on-one session to review your career goals and next steps.",
       durationMin: 60,
       price: 7500, // $75.00
@@ -55,6 +57,7 @@ async function main() {
   const tutoring = await prisma.service.create({
     data: {
       name: "Math Tutoring Session",
+      category: "Education",
       description: "Personalized tutoring for high school and college-level math.",
       durationMin: 45,
       price: 5000, // $50.00

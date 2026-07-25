@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Star, ImageIcon } from "lucide-react";
+import { Star } from "lucide-react";
 
 interface ServiceCardProps {
   id: string;
@@ -20,6 +20,20 @@ const badgeStyles: Record<string, string> = {
   POPULAR: "bg-accent-amber/20 text-accent-amber",
   NEW: "bg-brand-500/20 text-brand-400",
 };
+
+// Deterministic gradient per service (based on first character), so the same
+// service always gets the same look rather than a random one on every render.
+const GRADIENTS = [
+  "from-brand-700 to-brand-900",
+  "from-teal-600 to-brand-800",
+  "from-emerald-600 to-teal-800",
+  "from-brand-600 to-emerald-900",
+];
+
+function getGradient(name: string) {
+  const index = name.charCodeAt(0) % GRADIENTS.length;
+  return GRADIENTS[index];
+}
 
 export function ServiceCard({
   id,
@@ -43,18 +57,16 @@ export function ServiceCard({
 
   return (
     <div className="group bg-surface-raised rounded-card border border-surface-border shadow-card hover:shadow-card-hover hover:border-brand-600/40 transition-all overflow-hidden flex flex-col">
-      {/* Image / placeholder — fixed, moderate height instead of a tall aspect ratio,
-          so the card doesn't look like a mostly-empty void when no image exists yet */}
-      <div className="relative h-36 bg-neutral-800 flex items-center justify-center">
+      <div
+        className={`relative h-36 bg-linear-to-br ${getGradient(name)} flex items-center justify-center`}
+      >
         {imageUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img src={imageUrl} alt="" className="w-full h-full object-cover" />
         ) : (
-          <ImageIcon
-            size={28}
-            className="text-neutral-600"
-            aria-hidden="true"
-          />
+          <span className="text-4xl font-bold text-white/25">
+            {name.charAt(0).toUpperCase()}
+          </span>
         )}
         {badge && (
           <span
