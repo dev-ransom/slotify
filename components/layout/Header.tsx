@@ -1,23 +1,26 @@
 "use client";
 
-import { useSession, signOut } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { Logo } from "@/components/layout/Logo";
+import { UserMenu } from "@/components/layout/UserMenu";
 import { Button } from "@/components/ui/Button";
 
 interface HeaderProps {
-  minimal?: boolean; // true = logo only, used on auth pages (login/signup/etc.)
+  minimal?: boolean;
 }
 
 export function Header({ minimal = false }: HeaderProps) {
   const { data: session, status } = useSession();
 
+  const role = (session?.user as any)?.role;
+  const isProvider = role === "PROVIDER" || role === "ADMIN";
+  const logoHref = !session ? "/" : isProvider ? "/provider" : "/dashboard";
+
   return (
-    <header
-      className={`sticky top-0 z-40  ${minimal ? "bg-surface" : "bg-surface-raised border-b border-surface-border"}`}
-    >
-      <div className="max-w-9xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-        <Logo />
+    <header className="sticky top-0 z-40 bg-surface-raised border-b border-surface-border">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+        <Logo href={logoHref} />
 
         {!minimal && (
           <>
@@ -36,7 +39,7 @@ export function Header({ minimal = false }: HeaderProps) {
                   My Bookings
                 </Link>
               )}
-              {(session?.user as any)?.role === "PROVIDER" && (
+              {isProvider && (
                 <Link
                   href="/provider"
                   className="hover:text-neutral-50 transition-colors"
@@ -56,18 +59,7 @@ export function Header({ minimal = false }: HeaderProps) {
               {status === "loading" ? (
                 <div className="w-20 h-9 rounded-card bg-surface-border animate-pulse" />
               ) : session ? (
-                <>
-                  <span className="hidden sm:inline text-sm text-neutral-300">
-                    Hi, {session.user?.name?.split(" ")[0]}
-                  </span>
-                  <Button
-                    variant="outline"
-                    className="w-auto px-4"
-                    onClick={() => signOut({ callbackUrl: "/" })}
-                  >
-                    Sign out
-                  </Button>
-                </>
+                <UserMenu name={session.user?.name} isProvider={isProvider} />
               ) : (
                 <>
                   <Link

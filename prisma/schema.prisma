@@ -82,6 +82,7 @@ model Service {
   id          String   @id @default(cuid())
   name        String
   description String?
+  category    String?  @default("Other") // e.g. "Wellness", "Beauty & Spa", "Consulting" — used for landing page filtering
   durationMin Int      // e.g. 30, 60 (minutes) — used to generate slots
   price       Int      // store in cents to avoid float rounding issues (e.g. 5000 = $50.00)
   currency    String   @default("usd")

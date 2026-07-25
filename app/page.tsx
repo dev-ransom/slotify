@@ -86,7 +86,7 @@ export default function LandingPage() {
                 onChange={(e) => setPendingSearch(e.target.value)}
                 placeholder="Search services, professionals, or categories..."
                 aria-label="Search services"
-                className="w-full rounded-pill pl-11 pr-4 py-3 text-neutral-900 placeholder:text-neutral-200  focus:outline-none focus:ring-2 focus:ring-brand-300"
+                className="w-full rounded-pill pl-11 pr-4 py-3 text-white placeholder:text-neutral-200  focus:outline-none focus:ring-2 focus:ring-brand-300"
               />
             </div>
             <div>
@@ -111,7 +111,7 @@ export default function LandingPage() {
               role="tab"
               aria-selected={activeCategory === category}
               onClick={() => setActiveCategory(category)}
-              className={`whitespace-nowrap px-4 py-2 rounded-pill text-sm font-medium transition-colors focus:outline-none  ${
+              className={`whitespace-nowrap px-4 py-2 cursor-pointer rounded-pill text-sm font-medium transition-colors focus:outline-none  ${
                 activeCategory === category
                   ? "bg-brand-600 text-white"
                   : "bg-surface-raised text-neutral-300 border border-surface-border hover:bg-neutral-800"
@@ -128,7 +128,7 @@ export default function LandingPage() {
 
         {isLoading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-            {Array.from({ length: 8 }).map((_, i) => (
+            {Array.from({ length: services?.length }).map((_, i) => (
               <div
                 key={i}
                 className="rounded-card bg-surface-raised border border-surface-border h-64 animate-pulse"

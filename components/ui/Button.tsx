@@ -9,11 +9,11 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const variantStyles = {
-  primary: "bg-brand-600 hover:bg-brand-700 text-white focus:ring-brand-500",
+  primary:
+    "bg-brand-600 hover:bg-brand-700 text-white focus:ring-brand-500 glow-hover",
   secondary:
     "bg-neutral-100 hover:bg-neutral-200 text-neutral-800 focus:ring-neutral-400",
-  outline:
-    "border border-[#2E2E2E]  text-neutral-400 focus:ring-brand-500",
+  outline: "border border-[#2E2E2E]  text-neutral-400 focus:ring-brand-500",
 };
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(

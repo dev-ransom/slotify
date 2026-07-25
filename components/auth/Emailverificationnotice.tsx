@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { MailCheck } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 
@@ -14,6 +15,7 @@ const RESEND_COOLDOWN_SECONDS = 30;
 export function EmailVerificationNotice({
   email,
 }: EmailVerificationNoticeProps) {
+  const router = useRouter();
   const [isSending, setIsSending] = useState(false);
   const [cooldown, setCooldown] = useState(0);
   const [message, setMessage] = useState<string | null>(null);
@@ -97,6 +99,13 @@ export function EmailVerificationNotice({
           Sign up again
         </Link>
       </p>
+
+      <button
+        onClick={() => router.push("/dashboard")}
+        className="block w-full text-center text-sm text-neutral-500 hover:text-neutral-300 mt-4"
+      >
+        Skip for now — I&apos;ll verify later
+      </button>
     </div>
   );
 }

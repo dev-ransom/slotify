@@ -48,7 +48,7 @@ export async function POST(req: Request) {
   return NextResponse.json({ received: true });
 }
 
-async function handlePaymentSuccess(paymentIntent: Stripe.PaymentIntent) {
+export async function handlePaymentSuccess(paymentIntent: Stripe.PaymentIntent) {
   const slotId = paymentIntent.metadata?.slotId;
   const holderId = paymentIntent.metadata?.holderId;
   const userId = paymentIntent.metadata?.userId || null;
@@ -127,7 +127,7 @@ async function handlePaymentSuccess(paymentIntent: Stripe.PaymentIntent) {
   console.log(`Booking ${result.bookingId} confirmed for slot ${slotId}`);
 }
 
-async function handlePaymentFailure(paymentIntent: Stripe.PaymentIntent) {
+export async function handlePaymentFailure(paymentIntent: Stripe.PaymentIntent) {
   const slotId = paymentIntent.metadata?.slotId;
   const holderId = paymentIntent.metadata?.holderId;
 

@@ -6,10 +6,12 @@ import { prisma } from "@/lib/prisma";
 // grouped by date, for the slot picker UI.
 export async function GET(
   req: Request,
-  { params }: { params: { serviceId: string } }
+  { params }: { params: Promise<{ serviceId: string }> }
 ) {
+  const { serviceId } = await params;
+
   const service = await prisma.service.findUnique({
-    where: { id: params.serviceId, isActive: true },
+    where: { id: serviceId, isActive: true },
     include: {
       provider: { select: { name: true } },
     },
@@ -25,7 +27,7 @@ export async function GET(
 
   const slots = await prisma.slot.findMany({
     where: {
-      serviceId: params.serviceId,
+      serviceId: serviceId,
       startTime: { gte: now, lte: twoWeeksOut },
     },
     orderBy: { startTime: "asc" },
@@ -46,6 +48,7 @@ export async function GET(
       name: service.name,
       description: service.description,
       durationMin: service.durationMin,
+      category: service.category,
       price: service.price,
       currency: service.currency,
       providerName: service.provider.name,
