@@ -106,7 +106,7 @@ export function ServiceCard({
           </div>
           <Link
             href={`/services/${id}`}
-            className="text-sm font-medium bg-brand-600 hover:bg-brand-700 text-white rounded-pill px-4 py-2 transition-colors focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2 focus:ring-offset-surface-raised"
+            className="text-sm font-medium bg-brand-600 hover:bg-brand-700 text-white rounded-card px-4 py-2.5 transition-colors focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2 focus:ring-offset-surface-raised"
           >
             Book Now
           </Link>

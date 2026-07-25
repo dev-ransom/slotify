@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
+import { ArrowLeft } from "lucide-react";
 import { Elements } from "@stripe/react-stripe-js";
 import { Header } from "@/components/layout/Header";
 import { CountdownTimer } from "@/components/booking/CountdownTimer";
@@ -9,7 +10,13 @@ import { PaymentForm } from "@/components/booking/PaymentForm";
 import { Input } from "@/components/ui/Input";
 import { getStripe } from "@/lib/get-stripe";
 import { useSession } from "next-auth/react";
-import { CheckoutData } from "@/types";
+
+interface CheckoutData {
+  clientSecret: string;
+  amount: number;
+  currency: string;
+  serviceName: string;
+}
 
 export default function CheckoutPage() {
   const params = useParams<{ slotId: string }>();
@@ -69,6 +76,18 @@ export default function CheckoutPage() {
     setExpired(true);
   }
 
+  async function handleGoBack() {
+    // Release the hold rather than letting it sit until the TTL expires —
+    // frees the slot for other customers immediately instead of making them
+    // wait out someone else's abandoned checkout.
+    try {
+      await fetch(`/api/slots/${params.slotId}/hold`, { method: "DELETE" });
+    } catch {
+      // Non-critical — if this fails, the hold still expires naturally via TTL.
+    }
+    router.back();
+  }
+
   if (expired) {
     return (
       <div className="min-h-screen bg-surface">
@@ -96,6 +115,14 @@ export default function CheckoutPage() {
       <Header />
 
       <main className="max-w-lg mx-auto px-4 py-10">
+        <button
+          onClick={handleGoBack}
+          className="inline-flex items-center gap-1.5 text-sm text-neutral-400 hover:text-neutral-200 mb-5 transition-colors"
+        >
+          <ArrowLeft size={16} aria-hidden="true" />
+          Back — release this time slot
+        </button>
+
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-xl font-bold text-neutral-50">Checkout</h1>
           <CountdownTimer slotId={params.slotId} onExpire={handleExpire} />

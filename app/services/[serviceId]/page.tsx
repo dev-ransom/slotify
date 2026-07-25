@@ -2,12 +2,27 @@
 
 import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
+import Link from "next/link";
+import { ArrowLeft, Clock, User } from "lucide-react";
 import { Header } from "@/components/layout/Header";
 import { SlotPicker } from "@/components/booking/SlotPicker";
-import { Clock, User } from "lucide-react";
-import { ServiceDetail, Slot } from "@/types";
 
+interface Slot {
+  id: string;
+  startTime: string;
+  endTime: string;
+  status: "AVAILABLE" | "HELD" | "BOOKED";
+}
 
+interface ServiceDetail {
+  id: string;
+  name: string;
+  description: string | null;
+  durationMin: number;
+  price: number;
+  currency: string;
+  providerName: string | null;
+}
 
 export default function ServiceDetailPage() {
   const router = useRouter();
@@ -90,6 +105,14 @@ export default function ServiceDetailPage() {
           </div>
         ) : (
           <>
+            <Link
+              href="/"
+              className="inline-flex items-center gap-1.5 text-sm text-neutral-400 hover:text-neutral-200 mb-5 transition-colors"
+            >
+              <ArrowLeft size={16} aria-hidden="true" />
+              Back to browsing
+            </Link>
+
             <div className="mb-8">
               <h1 className="text-2xl sm:text-3xl font-bold text-neutral-50 mb-2">
                 {service.name}
