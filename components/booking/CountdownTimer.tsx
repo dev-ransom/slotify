@@ -1,64 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { Clock } from "lucide-react";
+import { useSlotHoldCountdown } from "@/hooks/useSlotHoldCountdown";
 import { CountdownTimerProps } from "@/types";
 
-
 export function CountdownTimer({ slotId, onExpire }: CountdownTimerProps) {
-  const [secondsLeft, setSecondsLeft] = useState<number | null>(null);
-  const [hasExpired, setHasExpired] = useState(false);
-
-  // Poll the real TTL from Redis (via the hold GET route) every few seconds,
-  // rather than trusting a purely client-side countdown — this way, if the tab
-  // was backgrounded/throttled, the displayed time self-corrects to the truth.
-  useEffect(() => {
-    let isMounted = true;
-
-    async function poll() {
-      try {
-        const res = await fetch(`/api/slots/${slotId}/hold`);
-        const data = await res.json();
-
-        if (!isMounted) return;
-
-        if (!data.held || data.ttlSeconds <= 0) {
-          setHasExpired(true);
-          onExpire();
-          return;
-        }
-
-        setSecondsLeft(data.ttlSeconds);
-      } catch {
-        // Network hiccup — don't expire on a failed poll, just try again next tick.
-      }
-    }
-
-    poll();
-    const pollInterval = setInterval(poll, 5000);
-
-    return () => {
-      isMounted = false;
-      clearInterval(pollInterval);
-    };
-  }, [slotId, onExpire]);
-
-  // Client-side ticking between polls, for a smooth countdown display.
-  useEffect(() => {
-    if (secondsLeft === null || hasExpired) return;
-
-    const tick = setInterval(() => {
-      setSecondsLeft((prev) => {
-        if (prev === null || prev <= 1) {
-          clearInterval(tick);
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-
-    return () => clearInterval(tick);
-  }, [secondsLeft !== null, hasExpired]);
+  const { secondsLeft } = useSlotHoldCountdown(slotId, onExpire);
 
   if (secondsLeft === null) return null;
 
