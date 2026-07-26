@@ -47,12 +47,6 @@ export function Header({ minimal = false }: HeaderProps) {
                   For Providers
                 </Link>
               )}
-              <Link
-                href="/pricing"
-                className="hover:text-neutral-50 transition-colors"
-              >
-                Pricing
-              </Link>
             </nav>
 
             <div className="flex items-center gap-3">
