@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { CheckCircle2, XCircle, Loader2, CalendarPlus } from "lucide-react";
@@ -16,9 +16,9 @@ interface BookingInfo {
 }
 
 const POLL_INTERVAL_MS = 2000;
-const MAX_POLL_ATTEMPTS = 15; // ~30 seconds — generous, webhooks are usually near-instant
+const MAX_POLL_ATTEMPTS = 15;
 
-export default function BookingConfirmationPendingPage() {
+function BookingConfirmationContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const slotId = searchParams.get("slotId");
@@ -57,7 +57,6 @@ export default function BookingConfirmationPendingPage() {
           return;
         }
 
-        // still "processing" — keep polling until we hit the cap
         if (attempts >= MAX_POLL_ATTEMPTS) {
           setStatus("timeout");
           return;
@@ -204,5 +203,29 @@ export default function BookingConfirmationPendingPage() {
         )}
       </main>
     </div>
+  );
+}
+
+function BookingConfirmationFallback() {
+  return (
+    <div className="min-h-screen bg-surface">
+      <Header />
+      <main className="max-w-lg mx-auto px-4 py-20 text-center">
+        <Loader2
+          size={40}
+          className="text-brand-400 animate-spin mx-auto mb-5"
+          aria-hidden="true"
+        />
+        <p className="text-neutral-400">Loading...</p>
+      </main>
+    </div>
+  );
+}
+
+export default function BookingConfirmationPendingPage() {
+  return (
+    <Suspense fallback={<BookingConfirmationFallback />}>
+      <BookingConfirmationContent />
+    </Suspense>
   );
 }
