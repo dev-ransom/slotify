@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useState, useEffect, type FormEvent } from "react";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 
@@ -34,6 +34,25 @@ export function AvailabilityEditor({
   const [selectedServiceId, setSelectedServiceId] = useState<string>(
     services[0]?.id ?? "",
   );
+
+  // Services load asynchronously in the parent — this component can mount
+  // before that fetch resolves, locking selectedServiceId to "" forever
+  // (useState's initial value only applies once, on mount). This effect
+  // keeps it in sync whenever the services list actually changes.
+  useEffect(() => {
+    if (!selectedServiceId && services.length > 0) {
+      setSelectedServiceId(services[0].id);
+    }
+    // If the previously-selected service was deleted/deactivated and no
+    // longer appears in the list, fall back to the first available one
+    // rather than silently submitting against a stale/invalid ID.
+    if (
+      selectedServiceId &&
+      !services.some((s) => s.id === selectedServiceId)
+    ) {
+      setSelectedServiceId(services[0]?.id ?? "");
+    }
+  }, [services, selectedServiceId]);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [selectedTimes, setSelectedTimes] = useState<string[]>([
@@ -112,7 +131,9 @@ export function AvailabilityEditor({
       selectedTimes.length === 0
     ) {
       setSlotError(
-        "Please select a service, date range, and at least one time.",
+        !selectedServiceId
+          ? "Please select a service first."
+          : "Please select a date range and at least one time.",
       );
       return;
     }
@@ -213,7 +234,7 @@ export function AvailabilityEditor({
               <select
                 value={selectedServiceId}
                 onChange={(e) => setSelectedServiceId(e.target.value)}
-                className="w-full rounded-card border border-neutral-200 px-4 py-2.5 text-neutral-900 focus:outline-none focus:ring-2 focus:ring-brand-500"
+                className="w-full rounded-card border border-neutral-200 px-4 py-2.5 text-neutral-300 focus:outline-none focus:ring-2 focus:ring-brand-500"
               >
                 {services.map((s) => (
                   <option key={s.id} value={s.id}>
