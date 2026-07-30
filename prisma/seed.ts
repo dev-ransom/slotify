@@ -54,6 +54,7 @@ async function main() {
     },
   });
 
+
   const tutoring = await prisma.service.create({
     data: {
       name: "Math Tutoring Session",
