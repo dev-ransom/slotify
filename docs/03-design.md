@@ -1,6 +1,6 @@
 ## Stage 3: Design
 
-### 3a. System Design (the technical meat — do this first since it drives the UX)
+### 3a. System Design
 
 **Slot-locking mechanism — three options, pick one and justify it:**
 
