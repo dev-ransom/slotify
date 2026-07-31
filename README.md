@@ -18,7 +18,8 @@ Slotify solves this with real-time slot locking, so once a customer starts check
 
 | Service Listing | Slot Picker | Checkout |
 |---|---|---|
-| ![listing](docs/design-assets/listing.png) | ![picker](docs/design-assets/picker.png) | ![checkout](docs/design-assets/checkout.png) |
+| ![listing](<img width="1791" height="634" alt="image" src="https://github.com/user-attachments/assets/704697e8-9e1f-4910-b437-6aede3f5c5f7" />
+) | ![picker](docs/design-assets/picker.png) | ![checkout](docs/design-assets/checkout.png) |
 
 ## Tech Stack
 
