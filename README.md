@@ -14,8 +14,6 @@ Slotify solves this with real-time slot locking, so once a customer starts check
 
 ## Screenshots
 
-*(Design screens generated via Stitch — added once available)*
-
 | Service Listing | Slot Picker | Checkout |
 |---|---|---|
 | ![listing](docs/design-assets/servicelisting.jpg) | ![picker](docs/design-assets/checkout.jpg) | ![checkout](docs/design-assets/checkout.jpg) |
