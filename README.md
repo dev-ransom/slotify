@@ -10,7 +10,7 @@ Slotify solves this with real-time slot locking, so once a customer starts check
 
 ## Live Demo
 
-🔗 [slotify.vercel.app](#) *(coming soon)*
+🔗 [slotify-nu.vercel.app](#)
 
 ## Screenshots
 
