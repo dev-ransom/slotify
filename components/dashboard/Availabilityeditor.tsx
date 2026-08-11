@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, type FormEvent } from "react";
+import { Sparkles } from "lucide-react";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 
@@ -27,7 +28,11 @@ export function AvailabilityEditor({
   const [name, setName] = useState("");
   const [durationMin, setDurationMin] = useState("30");
   const [price, setPrice] = useState(""); // dollars, converted to cents on submit
+  const [keyPoints, setKeyPoints] = useState(""); // rough notes, fed to AI
+  const [description, setDescription] = useState(""); // final description, AI-generated or hand-written
   const [isCreatingService, setIsCreatingService] = useState(false);
+  const [isGeneratingDescription, setIsGeneratingDescription] = useState(false);
+  const [descriptionError, setDescriptionError] = useState<string | null>(null);
   const [serviceError, setServiceError] = useState<string | null>(null);
 
   // ── Slot generation form ──
@@ -64,6 +69,44 @@ export function AvailabilityEditor({
   const [slotMessage, setSlotMessage] = useState<string | null>(null);
   const [slotError, setSlotError] = useState<string | null>(null);
 
+  async function handleGenerateDescription() {
+    setDescriptionError(null);
+
+    if (!name.trim() || !keyPoints.trim()) {
+      setDescriptionError("Enter a service name and a few key points first.");
+      return;
+    }
+
+    setIsGeneratingDescription(true);
+
+    try {
+      const res = await fetch("/api/ai/generate-description", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          serviceName: name,
+          keyPoints,
+          durationMin: parseInt(durationMin, 10) || 30,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setDescriptionError(data.error ?? "Could not generate a description.");
+        return;
+      }
+
+      setDescription(data.description);
+    } catch {
+      setDescriptionError(
+        "Network error — please try again, or write your own description.",
+      );
+    } finally {
+      setIsGeneratingDescription(false);
+    }
+  }
+
   async function handleCreateService(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setServiceError(null);
@@ -87,6 +130,7 @@ export function AvailabilityEditor({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name,
+          description: description.trim() || undefined,
           durationMin: parseInt(durationMin, 10),
           price: priceInCents,
         }),
@@ -104,6 +148,8 @@ export function AvailabilityEditor({
       setName("");
       setDurationMin("30");
       setPrice("");
+      setKeyPoints("");
+      setDescription("");
     } catch {
       setServiceError("Network error — please try again.");
     } finally {
@@ -202,6 +248,49 @@ export function AvailabilityEditor({
             value={price}
             onChange={(e) => setPrice(e.target.value)}
           />
+
+          <div className="sm:col-span-3">
+            <label className="block text-sm font-medium text-neutral-200 mb-1.5">
+              Key points (for AI description)
+            </label>
+            <textarea
+              value={keyPoints}
+              onChange={(e) => setKeyPoints(e.target.value)}
+              placeholder="e.g. relaxing, uses organic oils, good for back pain, 1-on-1 session"
+              rows={2}
+              className="w-full rounded-card border border-neutral-200 px-4 py-2.5 text-neutral-400 focus:outline-none focus:ring-2 focus:ring-brand-500 resize-none"
+            />
+            <button
+              type="button"
+              onClick={handleGenerateDescription}
+              disabled={isGeneratingDescription}
+              className="mt-2 inline-flex items-center cursor-pointer gap-1.5 text-sm font-medium text-brand-400 hover:text-brand-300 disabled:opacity-60 disabled:cursor-not-allowed"
+            >
+              <Sparkles size={14} aria-hidden="true" />
+              {isGeneratingDescription
+                ? "Generating..."
+                : "Generate description with AI"}
+            </button>
+            {descriptionError && (
+              <p role="alert" className="text-sm text-accent-rose mt-1.5">
+                {descriptionError}
+              </p>
+            )}
+          </div>
+
+          <div className="sm:col-span-3">
+            <label className="block text-sm font-medium text-neutral-200 mb-1.5">
+              Description
+            </label>
+            <textarea
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              placeholder="Generated description will appear here — feel free to edit it before saving."
+              rows={2}
+              className="w-full rounded-card border border-neutral-200 px-4 py-2.5 text-neutral-300 focus:outline-none focus:ring-2 focus:ring-brand-500 resize-none"
+            />
+          </div>
+
           <div className="sm:col-span-3">
             {serviceError && (
               <p role="alert" className="text-sm text-accent-rose mb-3">

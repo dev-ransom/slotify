@@ -30,7 +30,7 @@ export default function CustomerDashboardPage() {
   useEffect(() => {
     async function fetchBookings() {
       const res = await fetch("/api/bookings");
-      const data = await res.json();
+      const data = await res?.json();
       setUpcoming(data.upcoming ?? []);
       setPast(data.past ?? []);
       setIsLoading(false);

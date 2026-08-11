@@ -7,6 +7,46 @@ import { gemini, GEMINI_MODEL } from "@/lib/gemini";
 //
 // Provider-facing only — turns a few rough bullet points into a polished,
 // customer-facing service description.
+
+function sleep(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+async function generateWithRetry(
+  params: Parameters<typeof gemini.models.generateContent>[0],
+  maxRetries = 2
+) {
+  let lastErr: unknown;
+
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    try {
+      return await gemini.models.generateContent(params);
+    } catch (err: any) {
+      lastErr = err;
+
+      // Only retry on rate limit (429). Other errors (bad request, auth,
+      // model not found) won't be fixed by waiting, so fail fast.
+      const status = err?.status ?? err?.error?.code;
+      if (status !== 429 || attempt === maxRetries) {
+        throw err;
+      }
+
+      // Respect the API's suggested retry delay if present, else backoff.
+      const suggestedDelay = err?.error?.details?.find(
+        (d: any) => d["@type"]?.includes("RetryInfo")
+      )?.retryDelay;
+
+      const delayMs = suggestedDelay
+        ? parseFloat(suggestedDelay) * 1000
+        : 1000 * 2 ** attempt; // 1s, 2s, 4s...
+
+      await sleep(delayMs);
+    }
+  }
+
+  throw lastErr;
+}
+
 export async function POST(req: Request) {
   const session = await auth();
 
@@ -31,7 +71,7 @@ export async function POST(req: Request) {
     "or claims the provider didn't mention.";
 
   try {
-    const response = await gemini.models.generateContent({
+    const response = await generateWithRetry({
       model: GEMINI_MODEL,
       config: {
         systemInstruction,
@@ -57,10 +97,17 @@ export async function POST(req: Request) {
     }
 
     return NextResponse.json({ description });
-  } catch (err) {
+  } catch (err: any) {
     console.error("AI description generation failed:", err);
+
+    const isRateLimit = (err?.status ?? err?.error?.code) === 429;
+
     return NextResponse.json(
-      { error: "AI service is temporarily unavailable. You can write your own description instead." },
+      {
+        error: isRateLimit
+          ? "AI service is busy right now. Please try again in a moment, or write your own description."
+          : "AI service is temporarily unavailable. You can write your own description instead.",
+      },
       { status: 502 }
     );
   }

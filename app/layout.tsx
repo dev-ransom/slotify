@@ -3,6 +3,7 @@ import Script from "next/script";
 import { Providers } from "@/components/Providers";
 import "./globals.css";
 import { Toaster } from "@/components/ui/Toaster";
+import { ChatWidget } from "@/components/ChatWidget";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const gaMeasurementId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
@@ -33,6 +34,7 @@ export default function RootLayout({
         ) : null}
         <Providers>
           {children}
+          <ChatWidget />
           <Toaster />
         </Providers>
       </body>
